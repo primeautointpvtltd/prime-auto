@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export function About() {
   return (
     <section id="about" className="scroll-mt-24 bg-prime-navy py-16 text-white sm:py-20">
@@ -39,35 +41,22 @@ export function About() {
 
         <aside className="flex flex-col justify-center">
           <div className="overflow-hidden border border-white/15 bg-white/5">
-            <div className="relative aspect-[4/5] bg-[radial-gradient(circle_at_30%_20%,rgba(62,182,232,0.25),transparent_55%),linear-gradient(160deg,#0b4f9c,#062a5c)]">
-              {/* Replace /director.jpg when ready — drop your photo into public/director.jpg */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-                <div className="flex h-28 w-28 items-center justify-center rounded-full border border-white/30 bg-white/10">
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-14 w-14 text-white/70"
-                    fill="currentColor"
-                    aria-hidden
-                  >
-                    <path d="M12 12a4.5 4.5 0 1 0-4.5-4.5A4.5 4.5 0 0 0 12 12Zm0 2.25c-3.6 0-6.75 1.8-6.75 4.05V20h13.5v-1.7c0-2.25-3.15-4.05-6.75-4.05Z" />
-                  </svg>
-                </div>
-                <p className="mt-5 font-display text-xs font-semibold uppercase tracking-[0.22em] text-prime-cyan">
-                  Director
-                </p>
-                <p className="mt-2 font-display text-2xl font-bold uppercase tracking-tight">
-                  Photo coming soon
-                </p>
-                <p className="mt-2 max-w-[16rem] text-sm text-white/65">
-                  Attach your director portrait as{" "}
-                  <code className="text-prime-cyan">public/director.jpg</code>{" "}
-                  and we&apos;ll wire it in.
-                </p>
-              </div>
+            <div className="relative aspect-[4/5] bg-prime-blue/40">
+              <Image
+                src="/director.jpg"
+                alt="Managing Director of Prime Auto International"
+                fill
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="object-cover object-[center_20%]"
+                priority={false}
+              />
             </div>
             <div className="border-t border-white/10 px-5 py-4">
-              <p className="font-display text-lg font-bold uppercase tracking-tight">
+              <p className="font-display text-xs font-semibold uppercase tracking-[0.22em] text-prime-cyan">
                 Leadership
+              </p>
+              <p className="mt-2 font-display text-lg font-bold uppercase tracking-tight">
+                Managing Director
               </p>
               <p className="mt-1 text-sm text-white/70">
                 Guiding Prime Auto&apos;s import, export, and customer care
