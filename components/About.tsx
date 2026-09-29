@@ -39,23 +39,23 @@ export function About() {
           </ul>
         </div>
 
-        <aside className="flex flex-col justify-center">
-          <div className="overflow-hidden border border-white/15 bg-white/5">
-            <div className="relative aspect-[4/5] bg-prime-blue/40">
+        <aside className="flex flex-col justify-center lg:items-end">
+          <div className="w-full max-w-xs overflow-hidden border border-white/15 bg-white/5 sm:max-w-sm">
+            <div className="relative aspect-[3/4] bg-prime-blue/40">
               <Image
                 src="/director.jpg"
                 alt="Managing Director of Prime Auto International"
                 fill
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover object-[center_20%]"
+                sizes="(max-width: 640px) 100vw, 320px"
+                className="object-cover object-[center_15%]"
                 priority={false}
               />
             </div>
-            <div className="border-t border-white/10 px-5 py-4">
+            <div className="border-t border-white/10 px-4 py-3.5">
               <p className="font-display text-xs font-semibold uppercase tracking-[0.22em] text-prime-cyan">
                 Leadership
               </p>
-              <p className="mt-2 font-display text-lg font-bold uppercase tracking-tight">
+              <p className="mt-1.5 font-display text-base font-bold uppercase tracking-tight">
                 Managing Director
               </p>
               <p className="mt-1 text-sm text-white/70">
