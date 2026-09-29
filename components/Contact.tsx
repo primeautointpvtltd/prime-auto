@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 
 const OFFICE = {
   lat: 7.484452,
@@ -14,6 +15,8 @@ const PHONES = [
   { display: "076 171 8046", href: "tel:+94761718046" },
 ] as const;
 
+const CONTACT_EMAIL = "Primeautointpvtltd@gmail.com";
+
 const OSM_EMBED = `https://www.openstreetmap.org/export/embed.html?bbox=${
   OFFICE.lng - 0.02
 }%2C${OFFICE.lat - 0.015}%2C${OFFICE.lng + 0.02}%2C${
@@ -24,6 +27,52 @@ const GOOGLE_MAPS_LINK = `https://www.google.com/maps?q=${OFFICE.lat},${OFFICE.l
 const WHATSAPP_LINK = "https://wa.me/94768931709";
 
 export function Contact() {
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
+    "idle",
+  );
+  const [errorMessage, setErrorMessage] = useState("");
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    setStatus("sending");
+    setErrorMessage("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.get("name"),
+          phone: data.get("phone"),
+          email: data.get("email"),
+          interest: data.get("interest"),
+          message: data.get("message"),
+        }),
+      });
+
+      const payload = (await res.json().catch(() => ({}))) as {
+        error?: string;
+      };
+
+      if (!res.ok) {
+        setStatus("error");
+        setErrorMessage(
+          payload.error || "Could not send your enquiry. Please try again.",
+        );
+        return;
+      }
+
+      form.reset();
+      setStatus("sent");
+    } catch {
+      setStatus("error");
+      setErrorMessage("Could not send your enquiry. Please try again.");
+    }
+  }
+
   return (
     <section id="contact" className="scroll-mt-24">
       <div className="bg-white py-16 sm:py-20">
@@ -43,9 +92,7 @@ export function Contact() {
 
           <form
             className="mt-10 border border-prime-blue/15 bg-prime-mist p-6 sm:p-8"
-            onSubmit={(e) => {
-              e.preventDefault();
-            }}
+            onSubmit={onSubmit}
           >
             <p className="font-display text-lg font-bold uppercase tracking-tight text-prime-navy">
               Send an enquiry
@@ -56,7 +103,8 @@ export function Contact() {
                 <input
                   name="name"
                   required
-                  className="mt-1.5 w-full rounded-md border border-prime-blue/20 bg-white px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-prime-ink outline-none focus:border-prime-mid"
+                  disabled={status === "sending"}
+                  className="mt-1.5 w-full rounded-md border border-prime-blue/20 bg-white px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-prime-ink outline-none focus:border-prime-mid disabled:opacity-60"
                 />
               </label>
               <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-prime-muted">
@@ -65,7 +113,8 @@ export function Contact() {
                   name="phone"
                   type="tel"
                   required
-                  className="mt-1.5 w-full rounded-md border border-prime-blue/20 bg-white px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-prime-ink outline-none focus:border-prime-mid"
+                  disabled={status === "sending"}
+                  className="mt-1.5 w-full rounded-md border border-prime-blue/20 bg-white px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-prime-ink outline-none focus:border-prime-mid disabled:opacity-60"
                 />
               </label>
               <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-prime-muted sm:col-span-2">
@@ -73,14 +122,17 @@ export function Contact() {
                 <input
                   name="email"
                   type="email"
-                  className="mt-1.5 w-full rounded-md border border-prime-blue/20 bg-white px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-prime-ink outline-none focus:border-prime-mid"
+                  required
+                  disabled={status === "sending"}
+                  className="mt-1.5 w-full rounded-md border border-prime-blue/20 bg-white px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-prime-ink outline-none focus:border-prime-mid disabled:opacity-60"
                 />
               </label>
               <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-prime-muted sm:col-span-2">
                 Interest
                 <select
                   name="interest"
-                  className="mt-1.5 w-full rounded-md border border-prime-blue/20 bg-white px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-prime-ink outline-none focus:border-prime-mid"
+                  disabled={status === "sending"}
+                  className="mt-1.5 w-full rounded-md border border-prime-blue/20 bg-white px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-prime-ink outline-none focus:border-prime-mid disabled:opacity-60"
                 >
                   <option>Brand new vehicle</option>
                   <option>Registered vehicle</option>
@@ -95,15 +147,30 @@ export function Contact() {
                   name="message"
                   rows={4}
                   required
-                  className="mt-1.5 w-full resize-y rounded-md border border-prime-blue/20 bg-white px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-prime-ink outline-none focus:border-prime-mid"
+                  disabled={status === "sending"}
+                  className="mt-1.5 w-full resize-y rounded-md border border-prime-blue/20 bg-white px-3 py-2.5 text-sm font-medium normal-case tracking-normal text-prime-ink outline-none focus:border-prime-mid disabled:opacity-60"
                 />
               </label>
             </div>
+
+            {status === "sent" ? (
+              <p className="mt-4 text-sm font-medium text-prime-mid">
+                Enquiry sent. Our team will reply soon, and a confirmation email
+                is on its way to you.
+              </p>
+            ) : null}
+            {status === "error" ? (
+              <p className="mt-4 text-sm font-medium text-red-700">
+                {errorMessage}
+              </p>
+            ) : null}
+
             <button
               type="submit"
-              className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-prime-navy px-5 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-prime-blue sm:w-auto"
+              disabled={status === "sending"}
+              className="mt-6 inline-flex w-full items-center justify-center rounded-md bg-prime-navy px-5 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-prime-blue disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
             >
-              Submit enquiry
+              {status === "sending" ? "Sending…" : "Submit enquiry"}
             </button>
           </form>
         </div>
@@ -157,10 +224,10 @@ export function Contact() {
                 <dt className="inline font-semibold">Email: </dt>
                 <dd className="inline">
                   <a
-                    href="mailto:info@primeauto.example"
+                    href={`mailto:${CONTACT_EMAIL}`}
                     className="hover:underline"
                   >
-                    info@primeauto.example
+                    {CONTACT_EMAIL}
                   </a>
                 </dd>
               </div>
@@ -177,7 +244,7 @@ export function Contact() {
                 <WhatsAppIcon />
               </a>
               <a
-                href="mailto:info@primeauto.example"
+                href={`mailto:${CONTACT_EMAIL}`}
                 className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-prime-navy text-white transition hover:bg-white hover:text-prime-navy"
                 aria-label="Email"
               >
