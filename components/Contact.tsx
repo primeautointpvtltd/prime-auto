@@ -181,11 +181,11 @@ export function Contact() {
           <div className="flex flex-col justify-center">
             <div className="flex items-center gap-3">
               <Image
-                src="/logo-mark.png"
+                src="/logo-mark-transparent.png"
                 alt="Prime Auto"
-                width={140}
-                height={59}
-                className="h-12 w-auto object-contain brightness-0 invert"
+                width={160}
+                height={68}
+                className="h-12 w-auto object-contain"
               />
               <div>
                 <p className="font-display text-2xl font-bold uppercase tracking-tight text-white">
